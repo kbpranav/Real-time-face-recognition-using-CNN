@@ -63,7 +63,7 @@ class FaceRecg:
         cap1 = cv2.VideoCapture(0)
         time.sleep(2)
         print("\n Starting face detection...")
-        #print("\nDetecting Pedestrians now...\n[INFO]Press 'q' to exit")
+        
         while(True):
             #name+=1
             ret1,frame1 = cap1.read()
@@ -74,6 +74,7 @@ class FaceRecg:
             ##cv.imshow('gIMG',grayscale_image)
         
             # Load the classifier and create a cascade object for face detection
+            # Paste the destination of 'haarcascade_frontalface_alt.xml' available in opencv folder on your pc
             face_cascade = cv2.CascadeClassifier('C:\opencv\sources\samples\winrt\FaceDetection\FaceDetection\Assets\haarcascade_frontalface_alt.xml')
         
         
@@ -108,12 +109,12 @@ class FaceRecg:
             horizontal_flip=True,
             fill_mode='nearest')
         
-        img= load_img('A:\Engineering\Projects\FaceRecg\data_crop\\52.jpg')
+        img= load_img('img.jpg')
         x=img_to_array(img)
         x=x.reshape((1,)+ x.shape)
         
         i=0
-        for batch in datagen.flow(x,batch_size=1, save_to_dir='A:\Engineering\Projects\FaceRecg\preview', save_prefix='face', save_format='jpg'):
+        for batch in datagen.flow(x,batch_size=1, save_to_dir='\preview', save_prefix='face', save_format='jpg'):
             i+=1
             if(i>10):
                 break
@@ -127,11 +128,11 @@ class FaceRecg:
         
         test_datagen = ImageDataGenerator(rescale = 1./255)
         
-        training_set = train_datagen.flow_from_directory(r"A:\Engineering\Projects\FaceRecg\APP\dataset\train",target_size = (150, 150), batch_size = 32,class_mode='categorical')
+        training_set = train_datagen.flow_from_directory(r"\dataset\train",target_size = (150, 150), batch_size = 32,class_mode='categorical')
        
-        test_set = test_datagen.flow_from_directory(r"A:\Engineering\Projects\FaceRecg\APP\dataset\test" ,target_size = (150, 150), batch_size = 32,class_mode = 'categorical')
+        test_set = test_datagen.flow_from_directory(r"\dataset\test" ,target_size = (150, 150), batch_size = 32,class_mode = 'categorical')
         
-        filepath = "Trained_Weights.hdf5"
+        #filepath = "Trained_Weights.hdf5"
         checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
         start=time.time()
         print("\n Training started.....")
@@ -143,23 +144,20 @@ class FaceRecg:
                                  callbacks = [checkpoint])
         end=time.time()
         self.classifier.save("Trained_model")
-        #print(history.history.keys())
         print("\n[INFO]Trained Successfully...")
         print('Time to train:',(end-start)," seconds.")
-        #return self.classifier
+        
         
         
     def load_trained_model(self):
-        #self.classifier.load_weights('best_model_Evaluation_new.hdf5')
         self.classifier.load_weights('Trained_model')
-        #self.classifier.score(self.train_model().test_set)
         print("\n[INFO]Model Loaded Successfully...")
-        #return self.classifier
-        
+               
     def recognize(self):
         #Initiate the camera
         cap1 = cv2.VideoCapture(0)
         print("Starting Camera...")
+        # Paste the destination of 'haarcascade_frontalface_alt.xml' available in opencv folder on your pc
         face_cascade = cv2.CascadeClassifier('C:\opencv\sources\samples\winrt\FaceDetection\FaceDetection\Assets\haarcascade_frontalface_alt.xml')
         time.sleep(2)
         while(True):
